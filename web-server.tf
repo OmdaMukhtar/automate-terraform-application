@@ -1,7 +1,7 @@
 resource "aws_instance" "web" {
   instance_type = "t3.micro"
   ami = data.aws_ami.this.id
-  user_data       = filebase64("scripts/user_data.sh")
+  user_data       = file("scripts/user_data.sh")
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   subnet_id = aws_subnet.mainsubnet.id
   associate_public_ip_address = true
