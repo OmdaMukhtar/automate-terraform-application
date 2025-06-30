@@ -96,9 +96,6 @@ resource "aws_security_group" "allow_tls" {
   }
 }
 
-output "public_ip" {
-  value = aws_instance.web.public_ip
-}
 
 data "aws_ami" "this" {
   owners =["amazon"]
