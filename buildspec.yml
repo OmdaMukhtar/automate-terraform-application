@@ -1,14 +1,28 @@
-versoin: 0.2
+version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo "Installing prerequisites..."
+      - yum install -y yum-utils
+
   pre_build:
     commands:
-      - yum install -y yum-utils
+      - echo "Setting up Terraform..."
       - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
       - yum -y install terraform
-      - terraform version 
+      - terraform version
+
   build:
     commands:
+      - echo "Initializing Terraform..."
       - terraform init
+      - echo "Planning changes..."
       - terraform plan -out "tfplan"
-      - terraform  apply "tfplan"
+      - echo "Applying changes..."
+      - terraform apply -auto-approve "tfplan"
+
+  post_build:
+    commands:
+      - echo "Deployment complete!"
+      - echo "Web server URL: $(terraform output -raw web_url || echo 'No output')"
