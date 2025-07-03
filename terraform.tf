@@ -8,10 +8,11 @@ terraform {
 }
 
 provider "aws" {
-    default_tags {
-        tags = {
-            Environment = "test"
-            Project     = "test-project-ci/cd"
-        }
-    }
+  region = "us-east-1"
+  default_tags {
+      tags = {
+          Environment = "test"
+          Project     = "test-project-ci/cd"
+      }
+  }
 }
