@@ -1,20 +1,18 @@
-# Deploy Webserver Using Terraform(CI/CD)
-Deploy an ec2 instance the repersent as webserver install httpd and print "it's wokring..!"
+# CI/CD Terraform using Codebuild and CodePipeline
 
-![architecture diagram](assets/architect-ci-cd.png)
+## Requirements
 
-## Requirements 
-- Install repo of terraform
-- Install terraform package
-- Deploy infra using terraform
+- change configuration on codebuild 
+```
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+```
 
+TO
 
-## Notes:
-- Website to validate yaml checker [here](https://www.yamllint.com/)
-
-
-## After deployment complete
-- check aws codebuild log
-![alt text](assets/image.png)
-- Then type the url on browser
-![alt text](assets/image-1.png)
+```
+ artifacts {
+    type = "CODEPIPELINE"
+  }
+```
