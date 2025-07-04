@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_instance" "web" {
   instance_type = "t3.micro"
   ami = data.aws_ami.this.id
