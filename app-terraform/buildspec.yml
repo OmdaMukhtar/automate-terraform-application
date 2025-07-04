@@ -11,6 +11,8 @@ phases:
       - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
       - yum -y install terraform
       - terraform version
+      - echo "Current AWS Region: $AWS_DEFAULT_REGION"
+      - export TF_VAR_region=$AWS_DEFAULT_REGION
   build:
     commands:
       - echo "Navgate to the project files"
