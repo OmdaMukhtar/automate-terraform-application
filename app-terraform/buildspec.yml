@@ -8,10 +8,10 @@ phases:
   pre_build:
     commands:
       - echo "Setting up Terraform..."
-      - yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+      - yum-config-manager --add-repo  https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
       - yum -y install terraform
       - terraform version
-      - echo "Current AWS Region: $AWS_DEFAULT_REGION"
+      - echo $AWS_DEFAULT_REGION
       - export TF_VAR_region=$AWS_DEFAULT_REGION
   build:
     commands:
