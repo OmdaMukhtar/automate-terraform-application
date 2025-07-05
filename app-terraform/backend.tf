@@ -10,6 +10,5 @@ terraform {
   # Local development
   backend "local" {
     path = "terraform.tfstate"
-    region = "ap-northeast-1"
   }
 }
