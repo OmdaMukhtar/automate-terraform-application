@@ -1,5 +1,14 @@
+provider "aws" {
+  alias  = "codestar"
+  region = "ap-northeast-1"
+}
+
+resource "random_id" "project_suffx" {
+  byte_length = 4
+}
+
 resource "aws_codepipeline" "codepipeline" {
-  name     = "demo-terraform-pipeline-deployer"
+  name     = "demo-terraform-pipeline-deployer-${random_id.project_suffx.hex}"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -8,28 +17,26 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "Source"
+    name = "PullProject"
 
     action {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "GitHub"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner      = "OmdaMukhtar"
-        Repo       = "automate-terraform-application"
-        Branch     = var.branch_name
-        OAuthToken = var.github_oauth_token  
-        PollForSourceChanges = "true"    
+        ConnectionArn    = aws_codestarconnections_connection.github_connection.arn
+        FullRepositoryId = "OmdaMukhtar/automate-terraform-application"
+        BranchName       = "master"
       }
     }
   }
 
   stage {
-    name = "Build Stage"
+    name = "TerraformApply"
 
     action {
       name             = "BuildAndDeploy"
@@ -48,14 +55,19 @@ resource "aws_codepipeline" "codepipeline" {
 }
 
 resource "aws_codestarconnections_connection" "github_connection" {
-  name          = "github-connection"
+  name          = "github-connection-${random_id.project_suffx.hex}"
   provider_type = "GitHub"
+  provider      = aws.codestar
+   lifecycle {
+    prevent_destroy = false
+  }
 }
 
 resource "aws_s3_bucket" "codepipeline_bucket" {
-  bucket = "pipline-bucket"
+  bucket = "pipline-bucket-oop-${random_id.project_suffx.hex}"
+  force_destroy = true
+  provider      = aws.codestar
 }
-
 resource "aws_s3_bucket_public_access_block" "codepipeline_bucket_pab" {
   bucket = aws_s3_bucket.codepipeline_bucket.id
 
@@ -79,7 +91,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name               = "pipline-role"
+  name               = "pipline-role-${random_id.project_suffx.hex}"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -102,6 +114,12 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 
   statement {
+    effect    = "Allow"
+    actions   = ["codestar-connections:UseConnection"]
+    resources = [aws_codestarconnections_connection.github_connection.arn]
+  }
+
+  statement {
     effect = "Allow"
 
     actions = [
@@ -114,7 +132,19 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
-  name   = "codepipeline_policy"
+  name   = "codepipeline_policy-${random_id.project_suffx.hex}"
   role   = aws_iam_role.codepipeline_role.id
   policy = data.aws_iam_policy_document.codepipeline_policy.json
 }
+
+# Automatically delete the connection on destroy
+# resource "null_resource" "delete_codestar_connection" {
+#   triggers = {
+#     connection_arn = aws_codestarconnections_connection.github_connection.arn
+#   }
+
+#   provisioner "local-exec" {
+#     when    = destroy
+#     command = "aws codestar-connections delete-connection --connection-arn ${self.triggers.connection_arn}"
+#   }
+# }

@@ -1,3 +1,11 @@
+locals {
+  tags = {
+    Project = "infra-CI/CD-demo"
+    CreatedBy = "Omda"
+    IssueDate = timestamp()
+    Environment = "dev"
+  }
+}
 module "codebuild" {
   source = "./module/codebuild"
 }
