@@ -60,3 +60,18 @@ TO
     type = "CODEPIPELINE"
   }
 ```
+
+## Screenshot
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+## Shutdown Evertything
+
+- cd app-terraform
+- terraform init
+- terraform destroy --auto-approve
+- cd .. & cd infra-terraform
+- terraform init
+- terraform destroy --auto-approve

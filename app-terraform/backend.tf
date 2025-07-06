@@ -4,6 +4,7 @@ terraform {
     key = "web-server"
     bucket = "terraform-locks-oop123"
     dynamodb_table = "terraform-lock-oop"
+    region = "ap-northeast-1"
   }
 
   # Local development
