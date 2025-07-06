@@ -2,8 +2,8 @@ terraform {
   # Production development
   backend "s3" {
     key = "web-server"
-    bucket = "terraform-locks-oop"
-    dynamodb_table = "terraform-locks-oop123"
+    bucket = "terraform-locks-oop123"
+    dynamodb_table = "terraform-lock-oop"
   }
 
   # Local development
